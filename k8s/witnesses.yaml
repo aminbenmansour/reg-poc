@@ -1,0 +1,71 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: witnesses
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: witnesses
+  labels:
+    app: witnesses
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: witnesses
+  template:
+    metadata:
+      labels:
+        app: witnesses
+        version: v1
+    spec:
+      serviceAccountName: witnesses
+      volumes:
+      - name: keri-data
+        persistentVolumeClaim:
+          claimName: keria-pvc
+      containers:
+        - name: witnesses
+          image: aminbenmansour/witnesses:1.0
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: keri-data
+              mountPath: /usr/local/var/keri/
+          ports:
+            - containerPort: 5632
+            - containerPort: 5633
+            - containerPort: 5634
+            - containerPort: 5642
+            - containerPort: 5643
+            - containerPort: 5644
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: witnesses
+  labels:
+    app: witnesses
+spec:
+  selector:
+    app: witnesses
+  ports:
+    - name: tcp-wan
+      port: 5632
+      targetPort: 5632
+    - name: tcp-wil
+      port: 5633
+      targetPort: 5633
+    - name: tcp-wes
+      port: 5634
+      targetPort: 5634
+    - name: http-wan
+      port: 5642
+      targetPort: 5642
+    - name: http-wil
+      port: 5643
+      targetPort: 5643
+    - name: http-wes
+      port: 5644
+      targetPort: 5644

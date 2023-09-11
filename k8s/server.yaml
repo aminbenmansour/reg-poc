@@ -1,0 +1,57 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server
+  labels:
+    app: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+        version: v1
+    spec:
+      serviceAccountName: server  
+      containers:
+        - name: server
+          image: aminbenmansour/server:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          env:
+            - name: ENABLE_CORS
+              value: "true"
+            - name: VERIFIER_AUTHORIZATIONS
+              value: "http://verifier.default.svc.cluster.local/authorizations/"
+            - name: VERIFIER_PRESENTATIONS
+              value: "http://verifier.default.svc.cluster.local/presentations/"
+            - name: VERIFIER_REPORTS
+              value: "http://verifier.default.svc.cluster.local/reports/"
+            - name: VERIFIER_REQUESTS
+              value: "http://verifier.default.svc.cluster.local/request/verify/"
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: server
+  labels:
+    app: server
+spec:
+  selector:
+    app: server
+  ports:
+  - port: 8000
+    name: http-server
+    targetPort: 8000
+       

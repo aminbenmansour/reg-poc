@@ -1,0 +1,44 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vlei
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vlei
+  labels:
+    app: vlei
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vlei
+  template:
+    metadata:
+      labels:
+        app: vlei
+        version: v1
+    spec:
+      serviceAccountName: vlei
+      containers:
+        - name: vlei
+          image: aminbenmansour/vlei:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 7723
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vlei
+  labels:
+    app: vlei
+spec:
+  selector:
+    app: vlei
+  ports:
+    - name: http-vlei
+      port: 7723
+      targetPort: 7723
