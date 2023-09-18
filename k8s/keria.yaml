@@ -47,7 +47,6 @@ metadata:
 spec:
   selector:
     app: keria
-  type: NodePort
   ports:
     - name: http-admin
       port: 3901
@@ -58,6 +57,22 @@ spec:
     - name: http-boot
       port: 3903
       targetPort: 3903
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: keria
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - keria-gateway
+  http:
+  - route:
+    - destination:
+        host: keria.default.svc.cluster.local
+        port:
+          number: 3901
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
@@ -73,48 +88,3 @@ spec:
         protocol: HTTP
       hosts:
         - "*"
-    - port:
-        number: 3902
-        name: http-http
-        protocol: HTTP
-      hosts:
-        - "*"
-    - port:
-        number: 3903
-        name: http-boot
-        protocol: HTTP
-      hosts:
-        - "*"
----
-
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: keria
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - keria-gateway
-  http:
-  - match:
-    - port: 3901
-    route:
-      - destination:
-          host: keria.default.svc.cluster.local
-          port:
-            number: 3901
-  - match:
-    - port: 3902
-    route:
-      - destination:
-          host: keria.default.svc.cluster.local
-          port:
-            number: 3902
-  - match:
-    - port: 3903
-    route:
-      - destination:
-          host: keria.default.svc.cluster.local
-          port:
-            number: 3903

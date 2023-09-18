@@ -36,10 +36,10 @@ spec:
           value: "http://server.default.svc.cluster.local"
         - name: VERIFIER_SERVICE_URL
           value: "http://verifier.default.svc.cluster.local"
-        - name: VITE_SIGNIFY_URL
-          value: http://localhost:3901
         - name: VITE_SERVER_URL
-          value: "http://server.default.svc.cluster.local:8000"
+          value: http://10.101.94.174:8000
+        - name: VITE_SIGNIFY_URL
+          value: http://10.101.94.174:3901
 ---
 kind: Service
 apiVersion: v1
@@ -50,28 +50,11 @@ metadata:
 spec:
   selector:
     app: webapp
-  type: NodePort
   ports:
   - port: 80
     name: http
     targetPort: 5173
 ---
-apiVersion: networking.istio.io/v1beta1
-kind: Gateway
-metadata:
-  name: webapp-gateway
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-    - port:
-        number: 80
-        name: http
-        protocol: HTTP
-      hosts:
-        - "*"
----
-
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
@@ -87,3 +70,18 @@ spec:
         host: webapp.default.svc.cluster.local
         port:
           number: 80
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: webapp-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"

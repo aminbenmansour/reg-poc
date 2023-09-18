@@ -1,0 +1,17 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: main-gateway
+  namespace: traefik-v2
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`traefik.example.com`)
+      priority: 10
+      services:
+        - name: istio-ingressgateway
+          namespace: istio-system
+          port: 80
+  tls: {}

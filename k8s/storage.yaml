@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 512Mi
   accessModes:
-    - ReadWriteOnce 
+    - ReadWriteMany
   hostPath:
     path: "/data/keri"
   claimRef:

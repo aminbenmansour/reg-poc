@@ -6,8 +6,9 @@ RUN apk add git
 SHELL ["/bin/bash", "-c"]
 
 WORKDIR /webapp
-RUN git clone https://github.com/GLEIF-IT/reg-poc-webapp.git .
-RUN git checkout ce79f8565aed596d0a70a554c58612ce5ec31a8b
+RUN git clone https://github.com/aminbenmansour/reg-poc-webapp.git . && \
+    git checkout -b refact/state-management-typescript-full-support && \
+    git checkout f7e6cb7e4b676f06d2936be1403383f5e448a86f
 
 # Upgrade yarn to a newer version to support rebuild
 RUN yarn set version berry
